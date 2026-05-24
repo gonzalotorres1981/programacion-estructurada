@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Actividad 06 · Matrices (Arreglos Bidimensionales) · Gonzalo Torres</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" /><link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet" />
+<style>/* NEO-TOKYO BASE STYLES */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #080c10;
+  --bg-card: #0d1117;
+  --bg-card2: #111820;
+  --border: rgba(0,200,255,0.08);
+  --border-hover: rgba(0,200,255,0.25);
+  --text: #e8f4f8;
+  --text-muted: #6a8a9a;
+  --text-faint: #2a4a5a;
+  --cyan: #00c8ff;
+  --cyan-dim: rgba(0,200,255,0.12);
+  --magenta: #ff2d78;
+  --magenta-dim: rgba(255,45,120,0.1);
+  --green: #00ff9d;
+  --green-dim: rgba(0,255,157,0.1);
+  --amber: #ffb800;
+  --mono: 'JetBrains Mono', monospace;
+  --sans: 'Syne', sans-serif;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* scanline overlay */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px);
+  pointer-events: none;
+  z-index: 999;
+}
+
+.container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 3rem 2rem 6rem;
+}
+
+/* ── BACK BUTTON ── */
+.back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--text-muted);
+  text-decoration: none;
+  letter-spacing: 0.06em;
+  margin-bottom: 2rem;
+  padding: 6px 14px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  transition: color 0.2s, border-color 0.2s;
+}
+.back-btn:hover { color: var(--cyan); border-color: var(--border-hover); }
+.back-btn::before { content: '←'; }
+
+/* ── HERO ── */
+.hero {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 2.5rem 2.5rem 2rem;
+  margin-bottom: 2rem;
+  background: var(--bg-card);
+  position: relative;
+  overflow: hidden;
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+  opacity: 0.6;
+}
+
+.hero-num {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--cyan);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-bottom: 0.75rem;
+}
+
+.hero h1 {
+  font-size: clamp(1.6rem, 4vw, 2.4rem);
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  margin-bottom: 1rem;
+}
+
+.hero h1 .accent { color: var(--cyan); }
+
+.hero-desc {
+  color: var(--text-muted);
+  font-size: 14px;
+  line-height: 1.75;
+  max-width: 640px;
+}
+
+/* ── SECTION ── */
+.section {
+  margin-bottom: 1.5rem;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 1rem;
+}
+
+.section-label {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  color: var(--cyan);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.section-line {
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+/* ── PROGRAMS ── */
+.program-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 10px;
+  transition: border-color 0.2s;
+}
+.program-card:hover { border-color: var(--border-hover); }
+
+.program-title {
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--cyan);
+  margin-bottom: 0.5rem;
+}
+
+.program-file {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: 10px;
+  padding: 2px 8px;
+  border-radius: 3px;
+  background: var(--cyan-dim);
+  color: var(--cyan);
+  border: 1px solid rgba(0,200,255,0.2);
+  margin-bottom: 0.75rem;
+}
+
+.program-desc {
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.7;
+}
+
+/* ── TOPICS ── */
+.topics-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 8px;
+}
+
+.topic-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.5;
+  padding: 8px 12px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+}
+
+.topic-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--green);
+  margin-top: 5px;
+  flex-shrink: 0;
+  box-shadow: 0 0 6px var(--green);
+}
+
+/* ── TERMINAL BLOCK ── */
+.terminal {
+  background: #060a0e;
+  border: 1px solid rgba(0,200,255,0.15);
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+
+.terminal-bar {
+  background: #0d1520;
+  padding: 8px 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-bottom: 1px solid rgba(0,200,255,0.1);
+}
+
+.terminal-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+}
+.td-red { background: #ff5f57; }
+.td-yellow { background: #febc2e; }
+.td-green { background: #28c840; }
+
+.terminal-title {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--text-faint);
+  margin-left: 4px;
+  letter-spacing: 0.06em;
+}
+
+.terminal-body {
+  padding: 1rem 1.25rem;
+}
+
+.terminal-body code {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--green);
+  display: block;
+  line-height: 2;
+}
+
+.terminal-body code .prompt {
+  color: var(--cyan);
+  margin-right: 8px;
+  opacity: 0.6;
+}
+
+/* ── FILES GRID ── */
+.files-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 8px;
+}
+
+.file-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0.75rem 1rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  text-decoration: none;
+  color: var(--text-muted);
+  font-size: 13px;
+  transition: border-color 0.2s, color 0.2s;
+}
+.file-item:hover { border-color: var(--border-hover); color: var(--text); }
+
+.file-icon {
+  font-family: var(--mono);
+  font-size: 10px;
+  padding: 3px 6px;
+  border-radius: 3px;
+  flex-shrink: 0;
+  font-weight: 700;
+}
+.fi-c   { background: rgba(0,200,255,0.12); color: var(--cyan); border: 1px solid rgba(0,200,255,0.2); }
+.fi-png { background: rgba(255,45,120,0.1); color: var(--magenta); border: 1px solid rgba(255,45,120,0.2); }
+.fi-jpg { background: rgba(255,45,120,0.1); color: var(--magenta); border: 1px solid rgba(255,45,120,0.2); }
+.fi-pdf { background: rgba(255,184,0,0.1); color: var(--amber); border: 1px solid rgba(255,184,0,0.2); }
+.fi-txt { background: rgba(0,255,157,0.08); color: var(--green); border: 1px solid rgba(0,255,157,0.2); }
+.fi-md  { background: rgba(0,255,157,0.08); color: var(--green); border: 1px solid rgba(0,255,157,0.2); }
+
+.file-name {
+  font-family: var(--mono);
+  font-size: 11px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ── FOOTER ── */
+footer {
+  margin-top: 3rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--text-faint);
+}
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.hero    { animation: fadeUp 0.4s ease both; }
+.section { animation: fadeUp 0.4s ease both; }
+.section:nth-child(2) { animation-delay: 0.08s; }
+.section:nth-child(3) { animation-delay: 0.14s; }
+.section:nth-child(4) { animation-delay: 0.20s; }
+.section:nth-child(5) { animation-delay: 0.26s; }
+.section:nth-child(6) { animation-delay: 0.32s; }
+
+@media (max-width: 540px) {
+  .container { padding: 1.5rem 1rem 4rem; }
+  .hero { padding: 1.75rem 1.25rem; }
+  .topics-list { grid-template-columns: 1fr; }
+  .files-grid { grid-template-columns: 1fr 1fr; }
+}
+
+.file-item{cursor:pointer;}
+
+.overlay{display:none;position:fixed;inset:0;background:rgba(4,8,14,0.92);z-index:1000;align-items:center;justify-content:center;padding:1.5rem;}
+.overlay.active{display:flex;}
+.modal{background:#0d1117;border:1px solid rgba(0,200,255,0.2);border-radius:12px;width:100%;max-width:780px;max-height:88vh;display:flex;flex-direction:column;overflow:hidden;position:relative;}
+.modal-glow{position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,#00c8ff,transparent);opacity:0.6;}
+.modal-bar{display:flex;align-items:center;gap:8px;padding:10px 14px;background:#0a1018;border-bottom:1px solid rgba(0,200,255,0.1);flex-shrink:0;}
+.modal-bar .dot{width:8px;height:8px;border-radius:50%;}
+.dot-r{background:#ff5f57;}.dot-y{background:#febc2e;}.dot-g{background:#28c840;}
+.modal-fname{font-family:'JetBrains Mono',monospace;font-size:11px;color:#2a4a5a;margin-left:6px;flex:1;}
+.modal-close{font-family:'JetBrains Mono',monospace;font-size:18px;color:#2a4a5a;cursor:pointer;background:none;border:none;line-height:1;padding:0 4px;transition:color 0.15s;}
+.modal-close:hover{color:#ff2d78;}
+.modal-body{overflow:auto;flex:1;}
+.modal-body iframe{width:100%;height:72vh;border:none;display:block;background:#fff;}
+.code-wrap{padding:1rem 1.25rem;}
+.code-block{background:#060a0e;border-radius:8px;padding:1rem 1.25rem;font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.9;color:#00ff9d;overflow-x:auto;white-space:pre;}
+.img-wrap{padding:1rem;text-align:center;}
+.img-wrap img{max-width:100%;max-height:70vh;border-radius:6px;display:inline-block;}
+.modal-loading{padding:2rem;text-align:center;font-family:'JetBrains Mono',monospace;font-size:12px;color:#2a4a5a;}
+
+</style>
+</head>
+<body>
+<div class="container">
+  <a class="back-btn" href="../index.html"> Inicio</a>
+  <section class="hero">
+    <div class="hero-num">ACTIVIDAD · 06 / 12</div>
+    <h1><span class="accent">Matrices</span> (Arreglos Bidimensionales)</h1>
+    <p class="hero-desc">Manipulación de arreglos multidimensionales en C: declaración, ciclos anidados, indexación por coordenadas y comportamiento en memoria.</p>
+  </section>
+
+  <div class="section">
+  <div class="section-header">
+    <span class="section-label">Programas</span>
+    <div class="section-line"></div>
+  </div>
+  <div class="program-card">
+  <div class="program-title">Simulador de batalla naval</div>
+  <span class="program-file">battleship.c</span>
+  <p class="program-desc">Usa matrices int Jugador1[N][M] para representar cuadrículas de juego. Inicializa con ciclos for anidados y almacena estado por coordenadas (1=barco, 2=agua, 3=impacto).</p>
+</div><div class="program-card">
+  <div class="program-title">Tablero de caracteres</div>
+  <span class="program-file">tablero.c</span>
+  <p class="program-desc">Trabaja con char Jugador1[N][M]. Rellena la matriz con ~ por defecto y sobrescribe celdas individuales (Jugador1[1][2]='B'), demostrando control absoluto por índice.</p>
+</div><div class="program-card">
+  <div class="program-title">Gestión de memoria en matrices</div>
+  <span class="program-file">matrices.c</span>
+  <p class="program-desc">Declara char Nombre[4][20] e imprime las direcciones de Nombre[i] para comprobar que las filas se almacenan en bloques contiguos de memoria.</p>
+</div>
+</div>
+  <div class="section">
+  <div class="section-header">
+    <span class="section-label">Temas aplicados</span>
+    <div class="section-line"></div>
+  </div>
+  <div class="topics-list"><div class="topic-item"><div class="topic-dot"></div><span>Declaración y dimensionamiento de matrices (arreglos bidimensionales).</span></div><div class="topic-item"><div class="topic-dot"></div><span>Sistemas de indexación por coordenadas [fila][columna].</span></div><div class="topic-item"><div class="topic-dot"></div><span>Recorrido y llenado con ciclos anidados.</span></div><div class="topic-item"><div class="topic-dot"></div><span>Modificación directa de celdas individuales.</span></div><div class="topic-item"><div class="topic-dot"></div><span>Comportamiento de las matrices en la memoria física.</span></div></div>
+</div>
+  <div class="section">
+  <div class="section-header">
+    <span class="section-label">Compilación</span>
+    <div class="section-line"></div>
+  </div>
+  <div class="terminal">
+  <div class="terminal-bar">
+    <span class="terminal-dot td-red"></span>
+    <span class="terminal-dot td-yellow"></span>
+    <span class="terminal-dot td-green"></span>
+    <span class="terminal-title">compilación</span>
+  </div>
+  <div class="terminal-body"><code><span class="prompt">$</span>gcc battleship.c -o battleship</code><code><span class="prompt">$</span>gcc tablero.c -o tablero</code><code><span class="prompt">$</span>gcc matrices.c -o matrices</code></div>
+</div>
+</div>
+  <div class="section">
+  <div class="section-header">
+    <span class="section-label">Ejecución</span>
+    <div class="section-line"></div>
+  </div>
+  <div class="terminal">
+  <div class="terminal-bar">
+    <span class="terminal-dot td-red"></span>
+    <span class="terminal-dot td-yellow"></span>
+    <span class="terminal-dot td-green"></span>
+    <span class="terminal-title">ejecución</span>
+  </div>
+  <div class="terminal-body"><code><span class="prompt">$</span>./battleship</code><code><span class="prompt">$</span>./tablero</code><code><span class="prompt">$</span>./matrices</code></div>
+</div>
+</div>
+  <div class="section">
+  <div class="section-header">
+    <span class="section-label">docs — capturas y recursos</span>
+    <div class="section-line"></div>
+  </div>
+  <div class="files-grid"><button class="file-item" onclick="openFile('img','https://raw.githubusercontent.com/gonzalotorres1981/programacion-estructurada/main/actividad_06_matrices/docs/battleship.png','battleship.png')"><span class="file-icon fi-png">.png</span><span class="file-name">battleship.png</span></button><button class="file-item" onclick="openFile('img','https://raw.githubusercontent.com/gonzalotorres1981/programacion-estructurada/main/actividad_06_matrices/docs/lectura.png','lectura.png')"><span class="file-icon fi-png">.png</span><span class="file-name">lectura.png</span></button><button class="file-item" onclick="openFile('img','https://raw.githubusercontent.com/gonzalotorres1981/programacion-estructurada/main/actividad_06_matrices/docs/tablero.png','tablero.png')"><span class="file-icon fi-png">.png</span><span class="file-name">tablero.png</span></button></div>
+</div>
+  <div class="section">
+  <div class="section-header">
+    <span class="section-label">sources — código fuente</span>
+    <div class="section-line"></div>
+  </div>
+  <div class="files-grid"><button class="file-item" onclick="openFile('text','https://raw.githubusercontent.com/gonzalotorres1981/programacion-estructurada/main/actividad_06_matrices/sources/battleship.c','battleship.c')"><span class="file-icon fi-c">.c</span><span class="file-name">battleship.c</span></button><button class="file-item" onclick="openFile('text','https://raw.githubusercontent.com/gonzalotorres1981/programacion-estructurada/main/actividad_06_matrices/sources/matriz.c','matriz.c')"><span class="file-icon fi-c">.c</span><span class="file-name">matriz.c</span></button><button class="file-item" onclick="openFile('text','https://raw.githubusercontent.com/gonzalotorres1981/programacion-estructurada/main/actividad_06_matrices/sources/tablero.c','tablero.c')"><span class="file-icon fi-c">.c</span><span class="file-name">tablero.c</span></button></div>
+</div>
+
+  <footer>
+    <span>C Language · UDG · 2026-A</span>
+    <span>gonzalotorres1981</span>
+  </footer>
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="modal">
+    <div class="modal-glow"></div>
+    <div class="modal-bar">
+      <span class="dot dot-r"></span>
+      <span class="dot dot-y"></span>
+      <span class="dot dot-g"></span>
+      <span class="modal-fname" id="modal-fname"></span>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body" id="modal-body"></div>
+  </div>
+</div>
+
+<script>
+function openFile(type,rawUrl,fname){
+  document.getElementById('modal-fname').textContent=fname;
+  var body=document.getElementById('modal-body');
+  body.innerHTML='<div class="modal-loading">Cargando...</div>';
+  document.getElementById('overlay').classList.add('active');
+  if(type==='img'){
+    body.innerHTML='<div class="img-wrap"><img src="'+rawUrl+'" alt="'+fname+'"/></div>';
+  } else if(type==='pdf'){
+    var viewer='https://docs.google.com/viewer?url='+encodeURIComponent(rawUrl)+'&embedded=true';
+    body.innerHTML='<iframe src="'+viewer+'"></iframe>';
+  } else {
+    fetch(rawUrl)
+      .then(function(r){return r.text();})
+      .then(function(t){
+        var escaped=t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+        body.innerHTML='<div class="code-wrap"><pre class="code-block">'+escaped+'</pre></div>';
+      })
+      .catch(function(){
+        body.innerHTML='<div class="modal-loading">No se pudo cargar el archivo.</div>';
+      });
+  }
+}
+function closeModal(){document.getElementById('overlay').classList.remove('active');}
+document.getElementById('overlay').addEventListener('click',function(e){if(e.target===this)closeModal();});
+</script>
+</body>
+</html>
