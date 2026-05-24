@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Programación Estructurada · Gonzalo Torres</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #080c10;
+      --bg-card: #0d1117;
+      --bg-card-hover: #111820;
+      --border: rgba(0,200,255,0.08);
+      --border-hover: rgba(0,200,255,0.25);
+      --text: #e8f4f8;
+      --text-muted: #6a8a9a;
+      --text-faint: #2a4a5a;
+      --cyan: #00c8ff;
+      --cyan-dim: rgba(0,200,255,0.12);
+      --magenta: #ff2d78;
+      --green: #00ff9d;
+      --mono: 'JetBrains Mono', monospace;
+      --sans: 'Syne', sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px);
+      pointer-events: none;
+      z-index: 999;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 4rem 2rem 6rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* HERO */
+    .hero {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 3rem 2.5rem 2.5rem;
+      margin-bottom: 2rem;
+      background: var(--bg-card);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+      opacity: 0.6;
+    }
+
+    .hero-watermark {
+      position: absolute;
+      top: -20px; right: -10px;
+      font-family: var(--mono);
+      font-size: 180px;
+      font-weight: 700;
+      color: rgba(0,200,255,0.03);
+      line-height: 1;
+      pointer-events: none;
+      user-select: none;
+      letter-spacing: -10px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--mono);
+      font-size: 11px;
+      padding: 4px 12px;
+      border-radius: 99px;
+      background: var(--cyan-dim);
+      color: var(--cyan);
+      border: 1px solid rgba(0,200,255,0.2);
+      margin-bottom: 1.5rem;
+      letter-spacing: 0.04em;
+    }
+
+    .badge::before {
+      content: '';
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--cyan);
+      box-shadow: 0 0 6px var(--cyan);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    h1 {
+      font-size: clamp(2rem, 5vw, 3rem);
+      font-weight: 800;
+      line-height: 1.05;
+      margin-bottom: 0.4rem;
+      letter-spacing: -0.02em;
+    }
+
+    h1 .muted { color: var(--text-muted); font-weight: 400; }
+
+    .description {
+      color: var(--text-muted);
+      font-size: 14px;
+      line-height: 1.75;
+      margin-top: 1rem;
+      max-width: 520px;
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 2rem;
+      margin-top: 1.5rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .meta-item {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .meta-item span:first-child {
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--text-faint);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    .meta-item span:last-child {
+      font-family: var(--mono);
+      font-size: 13px;
+      color: var(--text);
+    }
+
+    /* SECTION */
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 1rem;
+      margin-top: 2rem;
+    }
+
+    .section-label {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      color: var(--cyan);
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .section-line {
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    /* TOPICS GRID */
+    .topics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+      gap: 10px;
+      margin-bottom: 2rem;
+    }
+
+    .topic-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1rem 1.1rem;
+      text-decoration: none;
+      color: inherit;
+      display: block;
+      transition: border-color 0.2s, background 0.2s, transform 0.15s;
+      position: relative;
+    }
+
+    .topic-card:hover {
+      border-color: var(--border-hover);
+      background: var(--bg-card-hover);
+      transform: translateY(-2px);
+    }
+
+    .topic-card::after {
+      content: '→';
+      position: absolute;
+      top: 12px; right: 14px;
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--text-faint);
+      transition: color 0.2s, right 0.2s;
+    }
+
+    .topic-card:hover::after {
+      color: var(--cyan);
+      right: 10px;
+    }
+
+    .topic-num {
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--cyan);
+      margin-bottom: 6px;
+      opacity: 0.7;
+    }
+
+    .topic-name {
+      font-size: 14px;
+      font-weight: 700;
+      line-height: 1.3;
+      padding-right: 1.5rem;
+    }
+
+    .topic-done {
+      position: absolute;
+      bottom: 12px; right: 14px;
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 6px var(--green);
+    }
+
+    /* INFO ROW */
+    .info-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 10px;
+      margin-bottom: 2rem;
+    }
+
+    .info-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1rem 1.25rem;
+    }
+
+    .info-card-label {
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--text-faint);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 6px;
+    }
+
+    .info-card-value {
+      font-family: var(--mono);
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--cyan);
+    }
+
+    /* FOOTER */
+    footer {
+      border-top: 1px solid var(--border);
+      padding-top: 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--text-faint);
+    }
+
+    .lang-pill {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .lang-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--cyan);
+      box-shadow: 0 0 6px var(--cyan);
+    }
+
+    /* ANIMATIONS */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(14px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .hero         { animation: fadeUp 0.45s ease both; }
+    .section-header { animation: fadeUp 0.45s 0.1s ease both; }
+    .topics-grid  { animation: fadeUp 0.45s 0.18s ease both; }
+    .info-row     { animation: fadeUp 0.45s 0.28s ease both; }
+    footer        { animation: fadeUp 0.45s 0.36s ease both; }
+
+    @media (max-width: 540px) {
+      .container { padding: 2rem 1.2rem 4rem; }
+      .hero { padding: 2rem 1.5rem; }
+      .hero-watermark { font-size: 110px; }
+      .topics-grid { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <section class="hero">
+    <div class="hero-watermark">C</div>
+    <div class="badge">Programación Estructurada · 2026-A</div>
+    <h1>Gonzalo Emmanuel<br><span class="muted">Torres Chávez</span></h1>
+    <p class="description">Repositorio de actividades y evidencias desarrolladas durante el curso de Programación Estructurada en lenguaje C.</p>
+    <div class="meta">
+      <div class="meta-item">
+        <span>Código</span>
+        <span>325019814</span>
+      </div>
+      <div class="meta-item">
+        <span>Sección</span>
+        <span>D04</span>
+      </div>
+      <div class="meta-item">
+        <span>Profesor</span>
+        <span>Jorge E. López Arce Delgado</span>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-header">
+    <span class="section-label">Temas trabajados — 12 completados</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="topics-grid">
+    <a class="topic-card" href="actividad_01_tipos_datos/index.html">
+      <div class="topic-num">01</div>
+      <div class="topic-name">Tipos de datos</div>
+      <div class="topic-done"></div>
+    </a>
+    <a class="topic-card" href="actividad_02_operadores/index.html">
+      <div class="topic-num">02</div>
+      <div class="topic-name">Operadores</div>
+      <div class="topic-done"></div>
+    </a>
+    <a class="topic-card" href="actividad_03_condicionales/index.html">
+      <div class="topic-num">03</div>
+      <div class="topic-name">Condicionales</div>
+      <div class="topic-done"></div>
+    </a>
+    <a class="topic-card" href="actividad_04_ciclos/index.html">
+      <div class="topic-num">04</div>
+      <div class="topic-name">Ciclos</div>
+      <div class="topic-done"></div>
+    </a>
+    <a class="topic-card" href="actividad_05_arreglos/index.html">
+      <div class="topic-num">05</div>
+      <div class="topic-name">Arreglos</div>
+      <div class="topic-done"></div>
+    </a>
+    <a class="topic-card" href="actividad_06_matrices/index.html">
+      <div class="topic-num">06</div>
+      <div class="topic-name">Matrices</div>
+      <div class="topic-done"></div>
+    </a>
+    <a class="topic-card" href="actividad_07_cadenas/index.html">
+      <div class="topic-num">07</div>
+      <div class="topic-name">Cadenas</div>
+      <div class="topic-done"></div>
+    </a>
+    <a class="topic-card" href="actividad_08_funciones/index.html">
+      <div class="topic-num">08</div>
+      <div class="topic-name">Funciones</div>
+      <div class="topic-done"></div>
+    </a>
+    <a class="topic-card" href="actividad_09_punteros/index.html">
+      <div class="topic-num">09</div>
+      <div class="topic-name">Punteros</div>
+      <div class="topic-done"></div>
+    </a>
+    <a class="topic-card" href="actividad_10_memoria_dinamica/index.html">
+      <div class="topic-num">10</div>
+      <div class="topic-name">Memoria dinámica</div>
+      <div class="topic-done"></div>
+    </a>
+    <a class="topic-card" href="actividad_11_struct_y_union/index.html">
+      <div class="topic-num">11</div>
+      <div class="topic-name">Struct y union</div>
+      <div class="topic-done"></div>
+    </a>
+    <a class="topic-card" href="actividad_12_archivos/index.html">
+      <div class="topic-num">12</div>
+      <div class="topic-name">Archivos</div>
+      <div class="topic-done"></div>
+    </a>
+  </div>
+
+  <div class="info-row">
+    <div class="info-card">
+      <div class="info-card-label">Lenguaje</div>
+      <div class="info-card-value">C · ANSI C99</div>
+    </div>
+    <div class="info-card">
+      <div class="info-card-label">Universidad</div>
+      <div class="info-card-value">UDG</div>
+    </div>
+    <div class="info-card">
+      <div class="info-card-label">Ciclo</div>
+      <div class="info-card-value">2026-A</div>
+    </div>
+    <div class="info-card">
+      <div class="info-card-label">Avance</div>
+      <div class="info-card-value">12 / 12</div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="lang-pill">
+      <div class="lang-dot"></div>
+      C Language
+    </div>
+    <div>gonzalotorres1981 · GitHub Pages</div>
+  </footer>
+
+</div>
+</body>
+</html>
