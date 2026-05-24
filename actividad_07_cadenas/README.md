@@ -27,8 +27,8 @@ Esta actividad tuvo como objetivo comprender cómo el lenguaje C maneja las cade
 Para compilar cada archivo de forma individual, ejecuta el comando correspondiente en la terminal:
 
 ```bash
-gcc string1.c -o string1
-gcc string2.c -o string2
+gcc Lectura.c -o string1
+gcc string.c -o string2
 ```
 
 ## Ejecución
