@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Actividad 02 · Operadores y Corrección de Código · Gonzalo Torres</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" /><link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet" />
+<style>/* NEO-TOKYO BASE STYLES */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #080c10;
+  --bg-card: #0d1117;
+  --bg-card2: #111820;
+  --border: rgba(0,200,255,0.08);
+  --border-hover: rgba(0,200,255,0.25);
+  --text: #e8f4f8;
+  --text-muted: #6a8a9a;
+  --text-faint: #2a4a5a;
+  --cyan: #00c8ff;
+  --cyan-dim: rgba(0,200,255,0.12);
+  --magenta: #ff2d78;
+  --magenta-dim: rgba(255,45,120,0.1);
+  --green: #00ff9d;
+  --green-dim: rgba(0,255,157,0.1);
+  --amber: #ffb800;
+  --mono: 'JetBrains Mono', monospace;
+  --sans: 'Syne', sans-serif;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* scanline overlay */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px);
+  pointer-events: none;
+  z-index: 999;
+}
+
+.container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 3rem 2rem 6rem;
+}
+
+/* ── BACK BUTTON ── */
+.back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--text-muted);
+  text-decoration: none;
+  letter-spacing: 0.06em;
+  margin-bottom: 2rem;
+  padding: 6px 14px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  transition: color 0.2s, border-color 0.2s;
+}
+.back-btn:hover { color: var(--cyan); border-color: var(--border-hover); }
+.back-btn::before { content: '←'; }
+
+/* ── HERO ── */
+.hero {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 2.5rem 2.5rem 2rem;
+  margin-bottom: 2rem;
+  background: var(--bg-card);
+  position: relative;
+  overflow: hidden;
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+  opacity: 0.6;
+}
+
+.hero-num {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--cyan);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-bottom: 0.75rem;
+}
+
+.hero h1 {
+  font-size: clamp(1.6rem, 4vw, 2.4rem);
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  margin-bottom: 1rem;
+}
+
+.hero h1 .accent { color: var(--cyan); }
+
+.hero-desc {
+  color: var(--text-muted);
+  font-size: 14px;
+  line-height: 1.75;
+  max-width: 640px;
+}
+
+/* ── SECTION ── */
+.section {
+  margin-bottom: 1.5rem;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 1rem;
+}
+
+.section-label {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  color: var(--cyan);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.section-line {
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+/* ── PROGRAMS ── */
+.program-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 10px;
+  transition: border-color 0.2s;
+}
+.program-card:hover { border-color: var(--border-hover); }
+
+.program-title {
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--cyan);
+  margin-bottom: 0.5rem;
+}
+
+.program-file {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: 10px;
+  padding: 2px 8px;
+  border-radius: 3px;
+  background: var(--cyan-dim);
+  color: var(--cyan);
+  border: 1px solid rgba(0,200,255,0.2);
+  margin-bottom: 0.75rem;
+}
+
+.program-desc {
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.7;
+}
+
+/* ── TOPICS ── */
+.topics-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 8px;
+}
+
+.topic-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.5;
+  padding: 8px 12px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+}
+
+.topic-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--green);
+  margin-top: 5px;
+  flex-shrink: 0;
+  box-shadow: 0 0 6px var(--green);
+}
+
+/* ── TERMINAL BLOCK ── */
+.terminal {
+  background: #060a0e;
+  border: 1px solid rgba(0,200,255,0.15);
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+
+.terminal-bar {
+  background: #0d1520;
+  padding: 8px 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-bottom: 1px solid rgba(0,200,255,0.1);
+}
+
+.terminal-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+}
+.td-red { background: #ff5f57; }
+.td-yellow { background: #febc2e; }
+.td-green { background: #28c840; }
+
+.terminal-title {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--text-faint);
+  margin-left: 4px;
+  letter-spacing: 0.06em;
+}
+
+.terminal-body {
+  padding: 1rem 1.25rem;
+}
+
+.terminal-body code {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--green);
+  display: block;
+  line-height: 2;
+}
+
+.terminal-body code .prompt {
+  color: var(--cyan);
+  margin-right: 8px;
+  opacity: 0.6;
+}
+
+/* ── FILES GRID ── */
+.files-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 8px;
+}
+
+.file-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0.75rem 1rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  text-decoration: none;
+  color: var(--text-muted);
+  font-size: 13px;
+  transition: border-color 0.2s, color 0.2s;
+}
+.file-item:hover { border-color: var(--border-hover); color: var(--text); }
+
+.file-icon {
+  font-family: var(--mono);
+  font-size: 10px;
+  padding: 3px 6px;
+  border-radius: 3px;
+  flex-shrink: 0;
+  font-weight: 700;
+}
+.fi-c   { background: rgba(0,200,255,0.12); color: var(--cyan); border: 1px solid rgba(0,200,255,0.2); }
+.fi-png { background: rgba(255,45,120,0.1); color: var(--magenta); border: 1px solid rgba(255,45,120,0.2); }
+.fi-jpg { background: rgba(255,45,120,0.1); color: var(--magenta); border: 1px solid rgba(255,45,120,0.2); }
+.fi-pdf { background: rgba(255,184,0,0.1); color: var(--amber); border: 1px solid rgba(255,184,0,0.2); }
+.fi-txt { background: rgba(0,255,157,0.08); color: var(--green); border: 1px solid rgba(0,255,157,0.2); }
+.fi-md  { background: rgba(0,255,157,0.08); color: var(--green); border: 1px solid rgba(0,255,157,0.2); }
+
+.file-name {
+  font-family: var(--mono);
+  font-size: 11px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ── FOOTER ── */
+footer {
+  margin-top: 3rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--text-faint);
+}
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.hero    { animation: fadeUp 0.4s ease both; }
+.section { animation: fadeUp 0.4s ease both; }
+.section:nth-child(2) { animation-delay: 0.08s; }
+.section:nth-child(3) { animation-delay: 0.14s; }
+.section:nth-child(4) { animation-delay: 0.20s; }
+.section:nth-child(5) { animation-delay: 0.26s; }
+.section:nth-child(6) { animation-delay: 0.32s; }
+
+@media (max-width: 540px) {
+  .container { padding: 1.5rem 1rem 4rem; }
+  .hero { padding: 1.75rem 1.25rem; }
+  .topics-list { grid-template-columns: 1fr; }
+  .files-grid { grid-template-columns: 1fr 1fr; }
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <a class="back-btn" href="../../index.html"> Inicio</a>
+  <section class="hero">
+    <div class="hero-num">ACTIVIDAD · 02 / 12</div>
+    <h1><span class="accent">Operadores</span> y Corrección de Código</h1>
+    <p class="hero-desc">Aprendizaje y clasificación de los operadores en C: aritméticos, lógicos, bitwise, ternario y de incremento, más un ejercicio de depuración de código.</p>
+  </section>
+
+  <div class="section">
+  <div class="section-header">
+    <span class="section-label">Programas</span>
+    <div class="section-line"></div>
+  </div>
+  <div class="program-card">
+  <div class="program-title">Exploración general de operadores</div>
+  <span class="program-file">main.c</span>
+  <p class="program-desc">Campo de pruebas para operadores aritméticos, relacionales (==, <=), lógicos (&& / ||), ternario (? :) y bitwise (&, |) con asignaciones compuestas y pre/post incremento.</p>
+</div><div class="program-card">
+  <div class="program-title">Ejercicios analíticos</div>
+  <span class="program-file">ejercicios.c</span>
+  <p class="program-desc">Evalúa la diferencia entre post-incremento (a++) y pre-incremento (++i), la precedencia de operadores y el comportamiento de la división entera.</p>
+</div><div class="program-card">
+  <div class="program-title">Depuración y estructuras de control</div>
+  <span class="program-file">ejercicios.c</span>
+  <p class="program-desc">Refactorización de un código con if-else: se agregaron llaves {}, se corrigieron puntos y coma faltantes, se reubicaron instrucciones y se aplicó indentación correcta.</p>
+</div>
+</div>
+  <div class="section">
+  <div class="section-header">
+    <span class="section-label">Temas aplicados</span>
+    <div class="section-line"></div>
+  </div>
+  <div class="topics-list"><div class="topic-item"><div class="topic-dot"></div><span>Operadores aritméticos y de asignación compuesta.</span></div><div class="topic-item"><div class="topic-dot"></div><span>Operadores relacionales (<, >, ==) y lógicos (&&, ||).</span></div><div class="topic-item"><div class="topic-dot"></div><span>Operador condicional ternario (? :).</span></div><div class="topic-item"><div class="topic-dot"></div><span>Operadores a nivel de bits (Bitwise &, |).</span></div><div class="topic-item"><div class="topic-dot"></div><span>Operadores de incremento y decremento (pre y post).</span></div><div class="topic-item"><div class="topic-dot"></div><span>Precedencia matemática.</span></div><div class="topic-item"><div class="topic-dot"></div><span>Estructuras de control if / else.</span></div><div class="topic-item"><div class="topic-dot"></div><span>Depuración (Debugging) y buenas prácticas de formato.</span></div></div>
+</div>
+  <div class="section">
+  <div class="section-header">
+    <span class="section-label">Compilación</span>
+    <div class="section-line"></div>
+  </div>
+  <div class="terminal">
+  <div class="terminal-bar">
+    <span class="terminal-dot td-red"></span>
+    <span class="terminal-dot td-yellow"></span>
+    <span class="terminal-dot td-green"></span>
+    <span class="terminal-title">compilación</span>
+  </div>
+  <div class="terminal-body"><code><span class="prompt">$</span>gcc main.c -o programa</code><code><span class="prompt">$</span>gcc ejercicios.c -o programa2</code></div>
+</div>
+</div>
+  <div class="section">
+  <div class="section-header">
+    <span class="section-label">Ejecución</span>
+    <div class="section-line"></div>
+  </div>
+  <div class="terminal">
+  <div class="terminal-bar">
+    <span class="terminal-dot td-red"></span>
+    <span class="terminal-dot td-yellow"></span>
+    <span class="terminal-dot td-green"></span>
+    <span class="terminal-title">ejecución</span>
+  </div>
+  <div class="terminal-body"><code><span class="prompt">$</span>./programa</code><code><span class="prompt">$</span>./programa2</code></div>
+</div>
+</div>
+  <div class="section">
+  <div class="section-header">
+    <span class="section-label">docs — capturas y recursos</span>
+    <div class="section-line"></div>
+  </div>
+  <div class="files-grid"><a class="file-item" href="https://github.com/gonzalotorres1981/programacion-estructurada/tree/main/actividad_02_operadores/docs/Evidencia 1.png" target="_blank"><span class="file-icon fi-png">.png</span><span class="file-name">Evidencia 1.png</span></a><a class="file-item" href="https://github.com/gonzalotorres1981/programacion-estructurada/tree/main/actividad_02_operadores/docs/Evidencia 2.png" target="_blank"><span class="file-icon fi-png">.png</span><span class="file-name">Evidencia 2.png</span></a><a class="file-item" href="https://github.com/gonzalotorres1981/programacion-estructurada/tree/main/actividad_02_operadores/docs/Evidencia 3.png" target="_blank"><span class="file-icon fi-png">.png</span><span class="file-name">Evidencia 3.png</span></a></div>
+</div>
+  <div class="section">
+  <div class="section-header">
+    <span class="section-label">sources — código fuente</span>
+    <div class="section-line"></div>
+  </div>
+  <div class="files-grid"><a class="file-item" href="https://github.com/gonzalotorres1981/programacion-estructurada/tree/main/actividad_02_operadores/sources/ejercicios.c" target="_blank"><span class="file-icon fi-c">.c</span><span class="file-name">ejercicios.c</span></a><a class="file-item" href="https://github.com/gonzalotorres1981/programacion-estructurada/tree/main/actividad_02_operadores/sources/main.c" target="_blank"><span class="file-icon fi-c">.c</span><span class="file-name">main.c</span></a></div>
+</div>
+
+  <footer>
+    <span>C Language · UDG · 2026-A</span>
+    <span>gonzalotorres1981</span>
+  </footer>
+</div>
+</body>
+</html>
